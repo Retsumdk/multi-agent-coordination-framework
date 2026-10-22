@@ -1,0 +1,12 @@
+[
+  {"op": "register", "agent": "alpha", "capabilities": ["write", "compute"]},
+  {"op": "register", "agent": "beta", "capabilities": ["write", "summarize"]},
+  {"op": "put", "agent": "alpha", "key": "plan", "value": {"phase": 1, "owner": "alpha"}},
+  {"op": "try-put", "agent": "beta", "key": "plan", "value": {"phase": 2, "owner": "beta"}},
+  {"op": "get", "key": "plan"},
+  {"op": "create-task", "title": "Summarize findings", "requiredCapabilities": ["summarize"]},
+  {"op": "claim", "agent": "beta", "task": "task-001"},
+  {"op": "complete", "agent": "beta", "task": "task-001", "result": {"sections": 5}},
+  {"op": "lease", "agent": "alpha", "resource": "gpu:node-7", "ttlMs": 500},
+  {"op": "tick", "advanceMs": 60000}
+]

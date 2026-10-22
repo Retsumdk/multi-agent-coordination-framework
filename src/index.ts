@@ -1,51 +1,26 @@
-#!/usr/bin/env bun
-/**
- * multi-agent-coordination-framework - Framework for coordinating multiple autonomous agents with shared state, conflict resolution, and collaborative task distribution
- * Built by Retsumdk
- */
-
-import { Command } from "commander";
-import { existsSync, readFileSync } from "fs";
-import { join } from "path";
-
-interface Config {
-  apiKey?: string;
-  baseUrl: string;
-  timeout: number;
-  retries: number;
-}
-
-const DEFAULTS: Config = {
-  baseUrl: "https://api.example.com",
-  timeout: 30000,
-  retries: 3,
-};
-
-function loadConfig(): Config {
-  const cfgPath = join(process.cwd(), "config.json");
-  if (existsSync(cfgPath)) {
-    try {
-      return { ...DEFAULTS, ...JSON.parse(readFileSync(cfgPath, "utf-8")) };
-    } catch { /* ignore */ }
-  }
-  return { ...DEFAULTS };
-}
-
-async function main(cfg: Config) {
-  console.log(`[${name}] Connected to ${cfg.baseUrl}`);
-  console.log(`[${name}] Timeout: ${cfg.timeout}ms | Retries: ${cfg.retries}`);
-  // TODO: implement your logic here
-  console.log(`[${name}] Done.`);
-}
-
-const program = new Command();
-program.name("multi-agent-coordination-framework").description("Framework for coordinating multiple autonomous agents with shared state, conflict resolution, and collaborative task distribution").version("1.0.0")
-  .option("-c, --config <path>", "Config file path", "config.json")
-  .option("-v, --verbose", "Verbose mode")
-  .action(async (opts) => {
-    const cfg = loadConfig();
-    if (opts.verbose) console.log("Verbose mode on");
-    try { await main(cfg); }
-    catch (e) { console.error(`Error: ${e}`); process.exit(1); }
-  });
-program.parse(process.argv);
+export * from "./types.js";
+export * from "./errors.js";
+export { Clock, SYSTEM_CLOCK, ManualClock } from "./clock.js";
+export { VersionedStateStore } from "./store.js";
+export { LeaseManager } from "./lease.js";
+export {
+  type ConflictResolver,
+  type ConflictContext,
+  type ConflictCandidate,
+  type ConflictDecision,
+  LastWriterWinsResolver,
+  FirstWriterWinsResolver,
+  createResolver,
+} from "./resolver.js";
+export { AgentRegistry } from "./registry.js";
+export { TaskBoard, type TaskBoardOptions } from "./tasks.js";
+export {
+  CoordinationEngine,
+  type EngineOptions,
+  type PutOutcome,
+  type ConflictResolution,
+  type TickReport,
+} from "./engine.js";
+export { runDemo, type DemoResult, type DemoStep } from "./demo.js";
+export { runScript, parseScriptFile, type ScriptOp, type ScriptResult } from "./cli.js";
+export { USAGE } from "./usage.js";
